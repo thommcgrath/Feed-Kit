@@ -1,5 +1,134 @@
-#tag Module
-Private Module JSON
+#tag Class
+Protected Class JSONEngine
+Implements FeedKit.Extension
+	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Boolean)
+		  If Value Then
+		    Dict.Value(Key) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Integer)
+		  If Value <> 0 Then
+		    Dict.Value(Key) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Text)
+		  If Value <> "" Then
+		    Dict.Value(Key) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Generate(Attachment As FeedKit.Attachment) As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
+		  
+		  Dict.Value("url") = Attachment.URL
+		  Dict.Value("mime_type") = Attachment.MimeType
+		  Self.AddIfNotEmpty(Dict, "title", Attachment.Title)
+		  Self.AddIfNotEmpty(Dict, "size_in_bytes", Attachment.Length)
+		  Self.AddIfNotEmpty(Dict, "duration_in_seconds", Attachment.Duration)
+		  
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Generate(Author As FeedKit.Author) As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Self.AddIfNotEmpty(Dict, "name", Author.Name)
+		  Self.AddIfNotEmpty(Dict, "url", Author.URL)
+		  Self.AddIfNotEmpty(Dict, "avatar", Author.IconURL)
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Generate(Entry As FeedKit.Entry) As Xojo.Core.Dictionary
+		  Dim Attachments() As Xojo.Core.Dictionary
+		  For Each Attachment As FeedKit.Attachment In Entry
+		    Attachments.Append(Self.Generate(Attachment))
+		  Next
+		  
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("id") = Entry.ID
+		  If Entry.Author <> Nil Then
+		    Dict.Value("author") = Self.Generate(Entry.Author)
+		  End If
+		  Self.AddIfNotEmpty(Dict, "url", Entry.URL)
+		  Self.AddIfNotEmpty(Dict, "external_url", Entry.ExternalURL)
+		  Self.AddIfNotEmpty(Dict, "title", Entry.Title)
+		  Self.AddIfNotEmpty(Dict, "content_html", Entry.ContentHTML)
+		  Self.AddIfNotEmpty(Dict, "content_text", Entry.ContentPlain)
+		  Self.AddIfNotEmpty(Dict, "summary", Entry.Summary)
+		  Self.AddIfNotEmpty(Dict, "image", Entry.ImageURL)
+		  Self.AddIfNotEmpty(Dict, "banner_image", Entry.BannerURL)
+		  If Entry.DatePublished <> Nil Then
+		    Dict.Value("date_published") = Entry.DatePublished.ToISO8601
+		  End If
+		  If Entry.DateModified <> Nil Then
+		    Dict.Value("date_modified") = Entry.DateModified.ToISO8601
+		  End If
+		  If UBound(Entry.Tags) > -1 Then
+		    Dict.Value("tags") = Text.Join(Entry.Tags, ",")
+		  End If
+		  
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Generate(Feed As FeedKit.Feed) As Text
+		  Dim Items() As Xojo.Core.Dictionary
+		  For Each Entry As FeedKit.Entry In Feed
+		    Items.Append(Self.Generate(Entry))
+		  Next
+		  
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("version") = "https://jsonfeed.org/version/1"
+		  Dict.Value("title") = Feed.Title
+		  Dict.Value("items") = Items
+		  Self.AddIfNotEmpty(Dict, "expired", Feed.Expired)
+		  Self.AddIfNotEmpty(Dict, "home_page_url", Feed.SiteURL)
+		  Self.AddIfNotEmpty(Dict, "feed_url", Feed.FeedURL)
+		  Self.AddIfNotEmpty(Dict, "description", Feed.Description)
+		  Self.AddIfNotEmpty(Dict, "user_comment", Feed.UserComment)
+		  Self.AddIfNotEmpty(Dict, "next_url", Feed.NextURL)
+		  Self.AddIfNotEmpty(Dict, "icon", Feed.IconURL)
+		  Self.AddIfNotEmpty(Dict, "favicon", Feed.FavIconURL)
+		  If Feed.Author <> Nil Then
+		    Dict.Value("author") = Self.Generate(Feed.Author)
+		  End If
+		  
+		  Return Xojo.Data.GenerateJSON(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Parse(Content As Text) As FeedKit.Feed
+		  If Content.Left(1) = "{" Then
+		    // JSON
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
+		      Return Self.ParseFeed(Dict)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Return Nil
+		    Catch Err As TypeMismatchException
+		      Return Nil
+		    End Try
+		  Else
+		    // Not supported
+		    Return Nil
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function ParseAttachment(Dict As Xojo.Core.Dictionary) As FeedKit.Attachment
 		  If Not (Dict.HasKey("url") And Dict.HasKey("mime_type")) Then
@@ -80,7 +209,7 @@ Private Module JSON
 		    Entry.DateModified = FeedKit.DateFromISO8601(Dict.Value("date_modified"))
 		  End If
 		  If Dict.HasKey("author") Then
-		    Entry.Author = ParseAuthor(Dict.Value("author"))
+		    Entry.Author = Self.ParseAuthor(Dict.Value("author"))
 		  End If
 		  If Dict.HasKey("tags") Then
 		    Dim Tags() As Auto = Dict.Value("tags")
@@ -94,7 +223,7 @@ Private Module JSON
 		  If Dict.HasKey("attachments") Then
 		    Dim Items() As Auto = Dict.Value("attachments")
 		    For Each Item As Xojo.Core.Dictionary In Items
-		      Entry.Append(ParseAttachment(Item))
+		      Entry.Append(Self.ParseAttachment(Item))
 		    Next
 		  End If
 		  
@@ -135,7 +264,7 @@ Private Module JSON
 		    Feed.FavIconURL = Dict.Value("favicon")
 		  End If
 		  If Dict.HasKey("author") Then
-		    Feed.Author = ParseAuthor(Dict.Value("author"))
+		    Feed.Author = Self.ParseAuthor(Dict.Value("author"))
 		  End If
 		  If Dict.HasKey("expired") Then
 		    Feed.Expired = Dict.Value("expired")
@@ -143,7 +272,7 @@ Private Module JSON
 		  
 		  Dim Items() As Auto = Dict.Value("items")
 		  For Each Item As Xojo.Core.Dictionary In Items
-		    Feed.Append(ParseEntry(Item))
+		    Feed.Append(Self.ParseEntry(Item))
 		  Next
 		  
 		  Return New FeedKit.Feed(Feed)
@@ -151,5 +280,5 @@ Private Module JSON
 	#tag EndMethod
 
 
-End Module
-#tag EndModule
+End Class
+#tag EndClass

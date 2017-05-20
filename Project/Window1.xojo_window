@@ -114,7 +114,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text)
-		  Break
+		  SourceArea.Text = FeedKit.JSONEngine.Generate(Feed)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

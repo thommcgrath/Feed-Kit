@@ -62,6 +62,30 @@ Protected Module FeedKit
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function Generate(Feed As FeedKit.Feed, Extension As FeedKit.Extension) As Text
+		  Return Extension.Generate(Feed)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Init()
+		  If UBound(mExtensions) = -1 Then
+		    mExtensions.Append(FeedKit.JSONEngine)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function JSONEngine() As FeedKit.JSONEngine
+		  Static Extension As FeedKit.JSONEngine
+		  If Extension = Nil Then
+		    Extension = New FeedKit.JSONEngine
+		  End If
+		  Return Extension
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function Parse(Content As Global.MemoryBlock) As FeedKit.Feed
 		  Dim StringValue As String = DefineEncoding(Content, Encodings.UTF8)
@@ -71,20 +95,14 @@ Protected Module FeedKit
 
 	#tag Method, Flags = &h1
 		Protected Function Parse(Content As Text) As FeedKit.Feed
-		  If Content.Left(1) = "{" Then
-		    // JSON
-		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
-		      Return FeedKit.JSON.ParseFeed(Dict)
-		    Catch Err As Xojo.Data.InvalidJSONException
-		      Return Nil
-		    Catch Err As TypeMismatchException
-		      Return Nil
-		    End Try
-		  Else
-		    // Not supported
-		    Return Nil
-		  End If
+		  Init()
+		  
+		  For Each Extension As FeedKit.Extension In mExtensions
+		    Dim Feed As FeedKit.Feed = Extension.Parse(Content)
+		    If Feed <> Nil Then
+		      Return Feed
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -95,6 +113,14 @@ Protected Module FeedKit
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Register(Extension As FeedKit.Extension)
+		  Init()
+		  
+		  mExtensions.Append(Extension)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ToISO8601(Extends Date As Xojo.Core.Date) As Text
 		  Dim Offset As Integer = Xojo.Math.Abs(Date.TimeZone.SecondsFromGMT)
@@ -102,9 +128,9 @@ Protected Module FeedKit
 		  Offset = Offset - (OffsetHours * 3600)
 		  Dim OffsetMinutes As Integer = Round(Offset / 60)
 		  
-		  Dim DatePart As Text = Date.Year.ToText(Nil, "0000") + "-" + Date.Month.ToText(Nil, "00") + "-" + Date.Day.ToText(Nil, "00")
-		  Dim TimePart As Text = Date.Hour.ToText(Nil, "00") + ":" + Date.Minute.ToText(Nil, "00") + ":" + Date.Second.ToText(Nil, "00")
-		  Dim OffsetPart As Text = if(Date.TimeZone.SecondsFromGMT < 0, "-", "+") + OffsetHours.ToText(Nil, "00") + ":" + OffsetMinutes.ToText(Nil, "00")
+		  Dim DatePart As Text = Date.Year.ToText(Xojo.Core.Locale.Raw, "0000") + "-" + Date.Month.ToText(Xojo.Core.Locale.Raw, "00") + "-" + Date.Day.ToText(Xojo.Core.Locale.Raw, "00")
+		  Dim TimePart As Text = Date.Hour.ToText(Xojo.Core.Locale.Raw, "00") + ":" + Date.Minute.ToText(Xojo.Core.Locale.Raw, "00") + ":" + Date.Second.ToText(Xojo.Core.Locale.Raw, "00")
+		  Dim OffsetPart As Text = if(Date.TimeZone.SecondsFromGMT < 0, "-", "+") + OffsetHours.ToText(Xojo.Core.Locale.Raw, "00") + ":" + OffsetMinutes.ToText(Xojo.Core.Locale.Raw, "00")
 		  
 		  Return DatePart + "T" + TimePart + OffsetPart
 		End Function
@@ -123,5 +149,50 @@ Protected Module FeedKit
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mExtensions() As FeedKit.Extension
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mExtensions()"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Module
 #tag EndModule
