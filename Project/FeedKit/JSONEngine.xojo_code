@@ -10,6 +10,22 @@ Implements FeedKit.Extension
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As FeedKit.Attachment)
+		  If Value <> Nil Then
+		    Dict.Value(Key) = Self.Generate(Value)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As FeedKit.Author)
+		  If Value <> Nil Then
+		    Dict.Value(Key) = Self.Generate(Value)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Integer)
 		  If Value <> 0 Then
 		    Dict.Value(Key) = Value
@@ -18,9 +34,25 @@ Implements FeedKit.Extension
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value() As Text, Separator As Text)
+		  If UBound(Value) > -1 Then
+		    Dict.Value(Key) = Text.Join(Value, Separator)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Text)
 		  If Value <> "" Then
 		    Dict.Value(Key) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Xojo.Core.Date)
+		  If Value <> Nil Then
+		    Dict.Value(Key) = Value.ToISO8601
 		  End If
 		End Sub
 	#tag EndMethod
@@ -58,26 +90,18 @@ Implements FeedKit.Extension
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("id") = Entry.ID
-		  If Entry.Author <> Nil Then
-		    Dict.Value("author") = Self.Generate(Entry.Author)
-		  End If
-		  Self.AddIfNotEmpty(Dict, "url", Entry.URL)
-		  Self.AddIfNotEmpty(Dict, "external_url", Entry.ExternalURL)
-		  Self.AddIfNotEmpty(Dict, "title", Entry.Title)
+		  Self.AddIfNotEmpty(Dict, "author", Entry.Author)
+		  Self.AddIfNotEmpty(Dict, "banner_image", Entry.BannerURL)
 		  Self.AddIfNotEmpty(Dict, "content_html", Entry.ContentHTML)
 		  Self.AddIfNotEmpty(Dict, "content_text", Entry.ContentPlain)
-		  Self.AddIfNotEmpty(Dict, "summary", Entry.Summary)
+		  Self.AddIfNotEmpty(Dict, "date_modified", Entry.DateModified)
+		  Self.AddIfNotEmpty(Dict, "date_published", Entry.DatePublished)
+		  Self.AddIfNotEmpty(Dict, "external_url", Entry.ExternalURL)
 		  Self.AddIfNotEmpty(Dict, "image", Entry.ImageURL)
-		  Self.AddIfNotEmpty(Dict, "banner_image", Entry.BannerURL)
-		  If Entry.DatePublished <> Nil Then
-		    Dict.Value("date_published") = Entry.DatePublished.ToISO8601
-		  End If
-		  If Entry.DateModified <> Nil Then
-		    Dict.Value("date_modified") = Entry.DateModified.ToISO8601
-		  End If
-		  If UBound(Entry.Tags) > -1 Then
-		    Dict.Value("tags") = Text.Join(Entry.Tags, ",")
-		  End If
+		  Self.AddIfNotEmpty(Dict, "summary", Entry.Summary)
+		  Self.AddIfNotEmpty(Dict, "tags", Entry.Tags, ",")
+		  Self.AddIfNotEmpty(Dict, "title", Entry.Title)
+		  Self.AddIfNotEmpty(Dict, "url", Entry.URL)
 		  
 		  Return Dict
 		End Function
@@ -102,9 +126,7 @@ Implements FeedKit.Extension
 		  Self.AddIfNotEmpty(Dict, "next_url", Feed.NextURL)
 		  Self.AddIfNotEmpty(Dict, "icon", Feed.IconURL)
 		  Self.AddIfNotEmpty(Dict, "favicon", Feed.FavIconURL)
-		  If Feed.Author <> Nil Then
-		    Dict.Value("author") = Self.Generate(Feed.Author)
-		  End If
+		  Self.AddIfNotEmpty(Dict, "author", Feed.Author)
 		  
 		  Return Xojo.Data.GenerateJSON(Dict)
 		End Function
