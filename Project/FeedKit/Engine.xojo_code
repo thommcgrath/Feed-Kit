@@ -1,5 +1,5 @@
 #tag Interface
-Protected Interface Extension
+Protected Interface Engine
 	#tag Method, Flags = &h0
 		Function Generate(Feed As FeedKit.Feed) As Text
 		  

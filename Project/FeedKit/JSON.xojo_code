@@ -1,6 +1,6 @@
 #tag Class
-Protected Class JSONEngine
-Implements FeedKit.Extension
+Protected Class JSON
+Implements FeedKit.Engine
 	#tag Method, Flags = &h1
 		Protected Sub AddIfNotEmpty(Dict As Xojo.Core.Dictionary, Key As Text, Value As Boolean)
 		  If Value Then

@@ -63,42 +63,49 @@ Protected Module FeedKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Generate(Feed As FeedKit.Feed, Extension As FeedKit.Extension) As Text
-		  Return Extension.Generate(Feed)
+		Protected Function JSON() As FeedKit.JSON
+		  Static Engine As FeedKit.JSON
+		  If Engine = Nil Then
+		    Engine = New FeedKit.JSON
+		  End If
+		  Return Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Init()
-		  If UBound(mExtensions) = -1 Then
-		    mExtensions.Append(FeedKit.JSONEngine)
-		  End If
-		End Sub
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Parse(Extends Engine As FeedKit.Engine, Content As Global.MemoryBlock) As FeedKit.Feed
+		  Dim StringValue As String = DefineEncoding(Content, Encodings.UTF8)
+		  Return Engine.Parse(StringValue.ToText)
+		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function JSONEngine() As FeedKit.JSONEngine
-		  Static Extension As FeedKit.JSONEngine
-		  If Extension = Nil Then
-		    Extension = New FeedKit.JSONEngine
-		  End If
-		  Return Extension
+	#tag Method, Flags = &h0
+		Function Parse(Extends Engine As FeedKit.Engine, Content As Xojo.Core.MemoryBlock) As FeedKit.Feed
+		  Dim TextValue As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Return Engine.Parse(TextValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function Parse(Content As Global.MemoryBlock) As FeedKit.Feed
-		  Dim StringValue As String = DefineEncoding(Content, Encodings.UTF8)
-		  Return FeedKit.Parse(StringValue.ToText)
+		Protected Function Parse(Content As Global.MemoryBlock, AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  Return FeedKit.Parse(DefineEncoding(Content, Encodings.UTF8).ToText, AdditionalEngines)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function Parse(Content As Global.MemoryBlock, ParamArray AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  Return FeedKit.Parse(Content, AdditionalEngines)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Parse(Content As Text) As FeedKit.Feed
-		  Init()
+		Protected Function Parse(Content As Text, AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  If AdditionalEngines.IndexOf(FeedKit.JSON) = -1 Then
+		    AdditionalEngines.Append(FeedKit.JSON)
+		  End If
 		  
-		  For Each Extension As FeedKit.Extension In mExtensions
-		    Dim Feed As FeedKit.Feed = Extension.Parse(Content)
+		  For Each Engine As FeedKit.Engine In AdditionalEngines
+		    Dim Feed As FeedKit.Feed = Engine.Parse(Content)
 		    If Feed <> Nil Then
 		      Return Feed
 		    End If
@@ -107,18 +114,21 @@ Protected Module FeedKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Parse(Content As Xojo.Core.MemoryBlock) As FeedKit.Feed
-		  Dim TextValue As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Return FeedKit.Parse(TextValue)
+		Protected Function Parse(Content As Text, ParamArray AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  Return FeedKit.Parse(Content, AdditionalEngines)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Register(Extension As FeedKit.Extension)
-		  Init()
-		  
-		  mExtensions.Append(Extension)
-		End Sub
+		Protected Function Parse(Content As Xojo.Core.MemoryBlock, AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  Return FeedKit.Parse(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content), AdditionalEngines)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Parse(Content As Xojo.Core.MemoryBlock, ParamArray AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
+		  Return FeedKit.Parse(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content), AdditionalEngines)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -149,11 +159,6 @@ Protected Module FeedKit
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mExtensions() As FeedKit.Extension
-	#tag EndProperty
-
-
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Index"
@@ -167,11 +172,6 @@ Protected Module FeedKit
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mExtensions()"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
