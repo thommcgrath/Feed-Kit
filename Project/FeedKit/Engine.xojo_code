@@ -7,6 +7,12 @@ Protected Interface Engine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MimeType() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Parse(Content As Text) As FeedKit.Feed
 		  
 		End Function

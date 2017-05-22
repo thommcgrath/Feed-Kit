@@ -133,6 +133,12 @@ Implements FeedKit.Engine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MimeType() As String
+		  Return "application/json"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Parse(Content As Text) As FeedKit.Feed
 		  If Content.Left(1) = "{" Then
 		    // JSON

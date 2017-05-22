@@ -113,7 +113,8 @@ End
 #tag Events ParseButton
 	#tag Event
 		Sub Action()
-		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text)
+		  Dim Engine As New FeedKit.JSON
+		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text, Engine)
 		  SourceArea.Text = FeedKit.JSON.Generate(Feed)
 		End Sub
 	#tag EndEvent

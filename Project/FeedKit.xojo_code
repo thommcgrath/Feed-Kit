@@ -100,15 +100,27 @@ Protected Module FeedKit
 
 	#tag Method, Flags = &h1
 		Protected Function Parse(Content As Text, AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
-		  If AdditionalEngines.IndexOf(FeedKit.JSON) = -1 Then
-		    AdditionalEngines.Append(FeedKit.JSON)
-		  End If
+		  Dim BuiltInEngines(0) As FeedKit.JSON
+		  BuiltInEngines(0) = FeedKit.JSON
+		  
+		  For Each BuiltInEngine As FeedKit.Engine In BuiltInEngines
+		    For Each AdditionalEngine As FeedKit.Engine In AdditionalEngines
+		      If AdditionalEngine.MimeType = BuiltInEngine.MimeType Then
+		        Continue For BuiltInEngine
+		      End If
+		    Next
+		    AdditionalEngines.Append(BuiltInEngine)
+		  Next
 		  
 		  For Each Engine As FeedKit.Engine In AdditionalEngines
-		    Dim Feed As FeedKit.Feed = Engine.Parse(Content)
-		    If Feed <> Nil Then
-		      Return Feed
-		    End If
+		    Try
+		      Dim Feed As FeedKit.Feed = Engine.Parse(Content)
+		      If Feed <> Nil Then
+		        Return Feed
+		      End If
+		    Catch Err As FeedKit.ParseError
+		      Continue
+		    End Try
 		  Next
 		End Function
 	#tag EndMethod
