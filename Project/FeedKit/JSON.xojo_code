@@ -67,6 +67,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "size_in_bytes", Attachment.Length)
 		  Self.AddIfNotEmpty(Dict, "duration_in_seconds", Attachment.Duration)
 		  
+		  RaiseEvent GenerateAttachment(Attachment, Dict)
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -74,9 +76,13 @@ Implements FeedKit.Engine
 	#tag Method, Flags = &h1
 		Protected Function Generate(Author As FeedKit.Author) As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
+		  
 		  Self.AddIfNotEmpty(Dict, "name", Author.Name)
 		  Self.AddIfNotEmpty(Dict, "url", Author.URL)
 		  Self.AddIfNotEmpty(Dict, "avatar", Author.IconURL)
+		  
+		  RaiseEvent GenerateAuthor(Author, Dict)
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -103,6 +109,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "title", Entry.Title)
 		  Self.AddIfNotEmpty(Dict, "url", Entry.URL)
 		  
+		  RaiseEvent GenerateEntry(Entry, Dict)
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -128,12 +136,14 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "favicon", Feed.FavIconURL)
 		  Self.AddIfNotEmpty(Dict, "author", Feed.Author)
 		  
+		  RaiseEvent GenerateFeed(Feed, Dict)
+		  
 		  Return Xojo.Data.GenerateJSON(Dict)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MimeType() As String
+		Function MimeType() As Text
 		  Return "application/json"
 		End Function
 	#tag EndMethod
@@ -177,6 +187,8 @@ Implements FeedKit.Engine
 		    Attachment.Duration = Dict.Value("duration_in_seconds")
 		  End If
 		  
+		  RaiseEvent ParseAttachment(Dict, Attachment)
+		  
 		  Return New FeedKit.Attachment(Attachment)
 		End Function
 	#tag EndMethod
@@ -198,6 +210,8 @@ Implements FeedKit.Engine
 		  If Dict.HasKey("url") Then
 		    Author.URL = Dict.Value("url")
 		  End If
+		  
+		  RaiseEvent ParseAuthor(Dict, Author)
 		  
 		  Return New FeedKit.Author(Author)
 		End Function
@@ -255,6 +269,8 @@ Implements FeedKit.Engine
 		    Next
 		  End If
 		  
+		  RaiseEvent ParseEntry(Dict, Entry)
+		  
 		  Return New FeedKit.Entry(Entry)
 		End Function
 	#tag EndMethod
@@ -303,9 +319,44 @@ Implements FeedKit.Engine
 		    Feed.Append(Self.ParseEntry(Item))
 		  Next
 		  
+		  RaiseEvent ParseFeed(Dict, Feed)
+		  
 		  Return New FeedKit.Feed(Feed)
 		End Function
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event GenerateAttachment(Attachment As FeedKit.Attachment, Destination As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GenerateAuthor(Author As FeedKit.Author, Destination As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GenerateEntry(Entry As FeedKit.Entry, Destination As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GenerateFeed(Feed As FeedKit.Feed, Destination As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ParseAttachment(Source As Xojo.Core.Dictionary, Attachment As FeedKit.MutableAttachment)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ParseAuthor(Source As Xojo.Core.Dictionary, Author As FeedKit.MutableAuthor)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ParseEntry(Source As Xojo.Core.Dictionary, Entry As FeedKit.MutableEntry)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ParseFeed(Source As Xojo.Core.Dictionary, Feed As FeedKit.MutableFeed)
+	#tag EndHook
 
 
 End Class

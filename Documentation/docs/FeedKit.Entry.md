@@ -1,5 +1,9 @@
 # FeedKit.Entry
 
+Instances of this class cannot be modified. See [FeedKit.MutableEntry](#feedkitmutableentry) for an editable version.
+
+FeedKit.Entry can be treated like an array of [FeedKit.Attachment](FeedKit.Attachment.md) instances.
+
 ## Constructors
 
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor(Source <span style="color: #0000FF;">As</span> FeedKit.Entry)</span></pre>

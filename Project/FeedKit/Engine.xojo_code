@@ -7,7 +7,7 @@ Protected Interface Engine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MimeType() As String
+		Function MIMEType() As Text
 		  
 		End Function
 	#tag EndMethod

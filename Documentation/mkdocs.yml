@@ -1,6 +1,7 @@
 site_name: Feed Kit
 pages:
 - Home: 'index.md'
+- FeedKit Module: 'FeedKit.md'
 - Classes: [
 {FeedKit.Feed: 'FeedKit.Feed.md'},
 {FeedKit.Entry: 'FeedKit.Entry.md'},
@@ -9,5 +10,8 @@ pages:
 ]
 - Interfaces: [
 {FeedKit.Engine: 'FeedKit.Engine.md'}
+]
+- Engines: [
+{FeedKit.JSON: 'FeedKit.JSON.md'}
 ]
 theme: mkdocs
