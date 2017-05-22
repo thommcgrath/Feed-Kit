@@ -1,4 +1,13 @@
-site_name: My Docs
+site_name: Feed Kit
 pages:
 - Home: 'index.md'
+- Classes: [
+{FeedKit.Feed: 'FeedKit.Feed.md'},
+{FeedKit.Entry: 'FeedKit.Entry.md'},
+{FeedKit.Attachment: 'FeedKit.Attachment.md'},
+{FeedKit.Author: 'FeedKit.Author.md'}
+]
+- Interfaces: [
+{FeedKit.Engine: 'FeedKit.Engine.md'}
+]
 theme: mkdocs
