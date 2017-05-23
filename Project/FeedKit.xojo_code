@@ -63,6 +63,54 @@ Protected Module FeedKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DateFromRFC822(Source As Text) As Xojo.Core.Date
+		  Dim Months(11) As Text
+		  Months(0) = "Jan"
+		  Months(1) = "Feb"
+		  Months(2) = "Mar"
+		  Months(3) = "Apr"
+		  Months(4) = "May"
+		  Months(5) = "Jun"
+		  Months(6) = "Jul"
+		  Months(7) = "Aug"
+		  Months(8) = "Sep"
+		  Months(9) = "Oct"
+		  Months(10) = "Nov"
+		  Months(11) = "Dec"
+		  
+		  Dim Parts() As Text = Source.Split(" ")
+		  If UBound(Parts) <> 5 Then
+		    Raise New UnsupportedFormatException
+		  End If
+		  
+		  Dim Year, Month, Day, Hour, Minute, Second As Integer
+		  
+		  Day = Integer.FromText(Parts(1), Xojo.Core.Locale.Raw)
+		  Month = Months.IndexOf(Parts(2)) + 1
+		  Year = Integer.FromText(Parts(3), Xojo.Core.Locale.Raw)
+		  
+		  Hour = Integer.FromText(Parts(4).Mid(0, 2), Xojo.Core.Locale.Raw)
+		  Minute = Integer.FromText(Parts(4).Mid(3, 2), Xojo.Core.Locale.Raw)
+		  Second = Integer.FromText(Parts(4).Mid(6, 2), Xojo.Core.Locale.Raw)
+		  
+		  Dim Zone As Xojo.Core.TimeZone
+		  If Parts(5).Left(1) = "+" Or Parts(5).Left(1) = "-" Then
+		    // Numeric offset
+		    Dim Multiplier As Integer = if(Parts(5).Left(1) = "-", -1, 1)
+		    Dim OffsetHours As Integer = Integer.FromText(Parts(5).Mid(1, 2), Xojo.Core.Locale.Raw) * 3600
+		    Dim OffsetMinutes As Integer = Integer.FromText(Parts(5).Mid(3, 2), Xojo.Core.Locale.Raw) * 60
+		    
+		    Zone = New Xojo.Core.TimeZone((OffsetHours + OffsetMinutes) * Multiplier)
+		  Else
+		    // Text offset, hopefully Xojo can handle it
+		    Zone = New Xojo.Core.TimeZone(Parts(5))
+		  End If
+		  
+		  Return New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, Zone)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function JSON() As FeedKit.JSON
 		  Static Engine As FeedKit.JSON
 		  If Engine = Nil Then

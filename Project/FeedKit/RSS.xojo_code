@@ -1,7 +1,7 @@
 #tag Class
 Protected Class RSS
 Implements FeedKit.Engine
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h1
 		Protected Sub Append(Document As XMLDocument, Parent As XMLNode, Value As FeedKit.Attachment)
 		  If Value = Nil Then
@@ -183,6 +183,16 @@ Implements FeedKit.Engine
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ParseAttachment(Element As XMLNode) As FeedKit.Attachment
+		  Dim Attachment As New FeedKit.MutableAttachment
+		  Attachment.URL = Element.GetAttribute("url").ToText
+		  Attachment.Length = Val(Element.GetAttribute("length"))
+		  Attachment.MimeType = Element.GetAttribute("type").ToText
+		  Return Attachment
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ParseEntry(Element As XMLNode) As FeedKit.Entry
 		  If Element = Nil Or Element.Name <> "item" Then
 		    Return Nil
@@ -195,14 +205,29 @@ Implements FeedKit.Engine
 		    Case "title"
 		      Entry.Title = Self.TextValue(Child)
 		    Case "pubDate"
-		      // Need to parse the publish date
+		      Try
+		        Entry.DatePublished = FeedKit.DateFromRFC822(Self.TextValue(Child))
+		      Catch Err As UnsupportedFormatException
+		        Raise New FeedKit.ParseError("pubDate is not a valid RFC 822 value.")
+		      End Try
 		    Case "guid"
 		      Entry.ID = Self.TextValue(Child)
 		    Case "description"
 		      Entry.ContentHTML = Self.TextValue(Child)
+		    Case "enclosure"
+		      Dim Attachment As FeedKit.Attachment = Self.ParseAttachment(Child)
+		      If Attachment <> Nil Then
+		        Entry.Append(Attachment)
+		      End If
+		    Case "author"
+		      Dim Author As New FeedKit.MutableAuthor
+		      Author.Email = Self.TextValue(Child)
+		      Entry.Author = Author
+		    Case "source"
+		      Entry.ExternalURL = Child.GetAttribute("url").ToText
 		    End Select
 		  Next
-		  Return New FeedKit.Entry(Entry)
+		  Return Entry
 		End Function
 	#tag EndMethod
 
