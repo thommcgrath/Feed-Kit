@@ -100,8 +100,11 @@ Protected Module FeedKit
 
 	#tag Method, Flags = &h1
 		Protected Function Parse(Content As Text, AdditionalEngines() As FeedKit.Engine) As FeedKit.Feed
-		  Dim BuiltInEngines(0) As FeedKit.JSON
+		  Dim BuiltInEngines(0) As FeedKit.Engine
 		  BuiltInEngines(0) = FeedKit.JSON
+		  #if Not TargetiOS
+		    BuiltInEngines.Append(FeedKit.RSS)
+		  #endif
 		  
 		  For Each BuiltInEngine As FeedKit.Engine In BuiltInEngines
 		    For Each AdditionalEngine As FeedKit.Engine In AdditionalEngines

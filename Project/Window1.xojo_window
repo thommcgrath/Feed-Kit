@@ -71,14 +71,14 @@ Begin Window Window1
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   560
+      Width           =   278
    End
-   Begin PushButton ParseButton
+   Begin PushButton JSONButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Parse"
+      Caption         =   "Create JSON"
       Default         =   False
       Enabled         =   True
       Height          =   20
@@ -86,7 +86,7 @@ Begin Window Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   310
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -102,7 +102,85 @@ Begin Window Window1
       Top             =   360
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   105
+   End
+   Begin TextArea DestinationArea
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   True
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   328
+      HelpTag         =   ""
+      HideSelection   =   True
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   310
+      LimitText       =   0
+      LineHeight      =   0.0
+      LineSpacing     =   1.0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Multiline       =   True
+      ReadOnly        =   True
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollbarVertical=   True
+      Styled          =   True
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   270
+   End
+   Begin PushButton RSSButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Create RSS"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   427
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   360
+      Underline       =   False
+      Visible         =   True
+      Width           =   105
    End
 End
 #tag EndWindow
@@ -110,12 +188,19 @@ End
 #tag WindowCode
 #tag EndWindowCode
 
-#tag Events ParseButton
+#tag Events JSONButton
 	#tag Event
 		Sub Action()
-		  Dim Engine As New FeedKit.JSON
-		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text, Engine)
-		  SourceArea.Text = FeedKit.RSS.Generate(Feed)
+		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text)
+		  DestinationArea.Text = FeedKit.JSON.Generate(Feed)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RSSButton
+	#tag Event
+		Sub Action()
+		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text)
+		  DestinationArea.Text = FeedKit.RSS.Generate(Feed)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

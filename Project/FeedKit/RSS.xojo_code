@@ -96,6 +96,10 @@ Implements FeedKit.Engine
 		    End If
 		  Next
 		  Seconds.SortWith(Dates)
+		  Dim BuildDate As Xojo.Core.Date
+		  If UBound(Dates) > -1 Then
+		    BuildDate = Dates(UBound(Dates))
+		  End If
 		  
 		  Dim Document As New XMLDocument
 		  
@@ -106,7 +110,7 @@ Implements FeedKit.Engine
 		  Self.Append(Document, Channel, "title", Feed.Title, False)
 		  Self.Append(Document, Channel, "link", Feed.SiteURL, False)
 		  Self.Append(Document, Channel, "description", Feed.Description, False)
-		  Self.Append(Document, Channel, "lastBuildDate", Dates(UBound(Dates)))
+		  Self.Append(Document, Channel, "lastBuildDate", BuildDate)
 		  
 		  If Feed.IconURL <> "" Then
 		    Dim Image As XMLNode = Channel.AppendChild(Document.CreateElement("image"))
@@ -119,7 +123,7 @@ Implements FeedKit.Engine
 		    Self.Append(Document, Channel, Entry)
 		  Next
 		  
-		  Return Document.ToString.ToText
+		  Return Document.Transform(Self.PrettyTransform).ToText
 		End Function
 	#tag EndMethod
 
@@ -131,9 +135,105 @@ Implements FeedKit.Engine
 
 	#tag Method, Flags = &h0
 		Function Parse(Content As Text) As FeedKit.Feed
+		  If Content.Length < 5 Or Content.Left(5) <> "<?xml" Then
+		    Return Nil
+		  End If
 		  
+		  Dim Document As XMLDocument
+		  Try
+		    Document = New XMLDocument(Content)
+		  Catch Err As XmlException
+		    Raise New FeedKit.ParseError(Err.Message.ToText)
+		  End Try
+		  
+		  Dim Root As XmlElement = Document.DocumentElement
+		  If Root.Name <> "rss" Then
+		    Return Nil
+		  End If
+		  If Root.GetAttribute("version") <> "2.0" Then
+		    Return Nil
+		  End If
+		  
+		  Dim Feed As New FeedKit.MutableFeed
+		  Dim Channel As XmlNode = Root.FirstChild
+		  For I As Integer = 0 To Channel.ChildCount - 1
+		    Dim Child As XmlNode = Channel.Child(I)
+		    Select Case Child.Name
+		    Case "title"
+		      Feed.Title = Self.TextValue(Child)
+		    Case "link"
+		      Feed.SiteURL = Self.TextValue(Child)
+		    Case "description"
+		      Feed.Description = Self.TextValue(Child)
+		    Case "image"
+		      Feed.IconURL = Self.TextValue(Self.Search(Child, "url"))
+		    Case "item"
+		      Dim Entry As FeedKit.Entry = Self.ParseEntry(Child)
+		      If Entry <> Nil Then
+		        Feed.Append(Entry)
+		      End If
+		    End Select
+		  Next
+		  
+		  Return New FeedKit.Feed(Feed)
+		  
+		  Exception Err As RuntimeException
+		    Raise New FeedKit.ParseError(Err.Message.ToText)
 		End Function
 	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseEntry(Element As XMLNode) As FeedKit.Entry
+		  If Element = Nil Or Element.Name <> "item" Then
+		    Return Nil
+		  End If
+		  
+		  Dim Entry As New FeedKit.MutableEntry
+		  For I As Integer = 0 To Element.ChildCount - 1
+		    Dim Child As XMLNode = Element.Child(I)
+		    Select Case Child.Name
+		    Case "title"
+		      Entry.Title = Self.TextValue(Child)
+		    Case "pubDate"
+		      // Need to parse the publish date
+		    Case "guid"
+		      Entry.ID = Self.TextValue(Child)
+		    Case "description"
+		      Entry.ContentHTML = Self.TextValue(Child)
+		    End Select
+		  Next
+		  Return New FeedKit.Entry(Entry)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Search(Element As XMLNode, Tag As String) As XMLNode
+		  If Element = Nil Or Element.ChildCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  For I As Integer = 0 To Element.ChildCount - 1
+		    If Element.Child(I).Name = Tag Then
+		      Return Element.Child(I)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TextValue(Element As XMLNode) As Text
+		  If Element = Nil Then
+		    Return ""
+		  End If
+		  If Element.FirstChild <> Nil And Element.FirstChild IsA XMLTextNode Then
+		    Return Element.FirstChild.Value.ToText
+		  End If
+		End Function
+	#tag EndMethod
+
+
+	#tag Constant, Name = PrettyTransform, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n    <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n    <xsl:template match\x3D\"/\">\n        <xsl:copy-of select\x3D\"/\" />\n    </xsl:template>\n</xsl:transform>", Scope = Protected
+	#tag EndConstant
 
 
 End Class
