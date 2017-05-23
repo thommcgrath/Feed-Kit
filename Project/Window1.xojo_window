@@ -115,7 +115,7 @@ End
 		Sub Action()
 		  Dim Engine As New FeedKit.JSON
 		  Dim Feed As FeedKit.Feed = FeedKit.Parse(SourceArea.Text, Engine)
-		  SourceArea.Text = FeedKit.JSON.Generate(Feed)
+		  SourceArea.Text = FeedKit.RSS.Generate(Feed)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

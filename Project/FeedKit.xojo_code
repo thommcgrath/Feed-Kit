@@ -143,6 +143,16 @@ Protected Module FeedKit
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function RSS() As FeedKit.RSS
+		  Static Engine As FeedKit.RSS
+		  If Engine = Nil Then
+		    Engine = New FeedKit.RSS
+		  End If
+		  Return Engine
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ToISO8601(Extends Date As Xojo.Core.Date) As Text
 		  Dim Offset As Integer = Xojo.Math.Abs(Date.TimeZone.SecondsFromGMT)
@@ -155,6 +165,46 @@ Protected Module FeedKit
 		  Dim OffsetPart As Text = if(Date.TimeZone.SecondsFromGMT < 0, "-", "+") + OffsetHours.ToText(Xojo.Core.Locale.Raw, "00") + ":" + OffsetMinutes.ToText(Xojo.Core.Locale.Raw, "00")
 		  
 		  Return DatePart + "T" + TimePart + OffsetPart
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToRFC822(Extends Date As Xojo.Core.Date) As Text
+		  Dim Days(6) As Text
+		  Days(0) = "Sun"
+		  Days(1) = "Mon"
+		  Days(2) = "Tue"
+		  Days(3) = "Wed"
+		  Days(4) = "Thu"
+		  Days(5) = "Fri"
+		  Days(6) = "Sat"
+		  
+		  Dim Months(11) As Text
+		  Months(0) = "Jan"
+		  Months(1) = "Feb"
+		  Months(2) = "Mar"
+		  Months(3) = "Apr"
+		  Months(4) = "May"
+		  Months(5) = "Jun"
+		  Months(6) = "Jul"
+		  Months(7) = "Aug"
+		  Months(8) = "Sep"
+		  Months(9) = "Oct"
+		  Months(10) = "Nov"
+		  Months(11) = "Dec"
+		  
+		  Dim Offset As Integer = Xojo.Math.Abs(Date.TimeZone.SecondsFromGMT)
+		  Dim OffsetHours As Integer = Floor(Offset / 3600)
+		  Offset = Offset - (OffsetHours * 3600)
+		  Dim OffsetMinutes As Integer = Round(Offset / 60)
+		  
+		  Dim DayOfWeek As Text = Days(Date.DayOfWeek - 1)
+		  Dim MonthName As Text = Months(Date.Month - 1)
+		  Dim DatePart As Text = DayOfWeek + ", " + Date.Day.ToText(Xojo.Core.Locale.Raw, "00") + " " + MonthName + " " + Date.Year.ToText(Xojo.Core.Locale.Raw, "0000")
+		  Dim TimePart As Text = Date.Hour.ToText(Xojo.Core.Locale.Raw, "00") + ":" + Date.Minute.ToText(Xojo.Core.Locale.Raw, "00") + ":" + Date.Second.ToText(Xojo.Core.Locale.Raw, "00")
+		  Dim OffsetPart As Text = if(Date.TimeZone.SecondsFromGMT < 0, "-", "+") + OffsetHours.ToText(Xojo.Core.Locale.Raw, "00") + OffsetMinutes.ToText(Xojo.Core.Locale.Raw, "00")
+		  
+		  Return DatePart + " " + TimePart + " " + OffsetPart
 		End Function
 	#tag EndMethod
 

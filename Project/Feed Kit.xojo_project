@@ -19,6 +19,7 @@ Class=MutableAttachment;FeedKit/MutableAttachment.xojo_code;&h31B4CFFF;&h5EB797F
 Class=MutableEntry;FeedKit/MutableEntry.xojo_code;&h15073FFF;&h5EB797FF;false
 Interface=Engine;FeedKit/Engine.xojo_code;&h422807FF;&h5EB797FF;false
 Class=JSON;FeedKit/JSON.xojo_code;&h3C917FF;&h5EB797FF;false
+Class=RSS;FeedKit/RSS.xojo_code;&h57C53FFF;&h5EB797FF;false
 DefaultWindow=Window1
 AppMenuBar=MainMenuBar
 MajorVersion=1

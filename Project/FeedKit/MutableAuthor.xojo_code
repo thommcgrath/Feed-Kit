@@ -9,6 +9,12 @@ Inherits FeedKit.Author
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Email(Assigns Value As Text)
+		  Self.mEmail = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IconURL(Assigns Value As Text)
 		  Self.mIconURL = Value
 		End Sub

@@ -11,7 +11,14 @@ Protected Class Author
 		  Self.mIconURL = Source.mIconURL
 		  Self.mName = Source.mName
 		  Self.mURL = Source.mURL
+		  Self.mEmail = Source.mEmail
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Email() As Text
+		  Return Self.mEmail
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -32,6 +39,10 @@ Protected Class Author
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h1
+		Protected mEmail As Text
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mIconURL As Text
@@ -59,11 +70,6 @@ Protected Class Author
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mName"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
