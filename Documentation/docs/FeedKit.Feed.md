@@ -1,15 +1,16 @@
 # FeedKit.Feed
 
-Instances of this class cannot be modified. See [FeedKit.MutableFeed](#feedkitmutablefeed) for an editable version.
-
 FeedKit.Feed can be treated like an array of [FeedKit.Entry](FeedKit.Entry.md) instances.
 
 ## Constructors
 
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor(Source <span style="color: #0000FF;">As</span> FeedKit.Feed)</span></pre>
-Creates a clone of the supplied feed.
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor()</span></pre>
+Creates a new empty feed.
 
 ## Properties
+
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;">Author <span style="color: #0000FF;">As</span> FeedKit.Author</span></pre>
+Author, if available, of the feed.
 
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;">Count <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span> <span style="color: #800000;">// Read Only</span></span></pre>
 The number of entries.
@@ -43,29 +44,15 @@ Plain text developer comments about the feed.
 
 ## Methods
 
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Function</span> Author() <span style="color: #0000FF;">As</span> FeedKit.Author</span></pre>
-Returns the author object of the feed, or nil if not supplied.
-
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Function</span> Entry(Index <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span>) <span style="color: #0000FF;">As</span> FeedKit.Entry</span></pre>
-Returns the entry at the supplied index. Throws an OutOfBoundsException if the index is invalid.
-
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Function</span> IndexOf(Entry <span style="color: #0000FF;">As</span> FeedKit.Entry) <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span></span></pre>
-Returns in the index of the supplied entry, or -1 if not found.
-
-# FeedKit.MutableFeed
-
-## Constructors
-
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor()</span></pre>
-Creates a new empty feed.
-
-## Methods
-
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Append(Entry <span style="color: #0000FF;">As</span> FeedKit.Entry)</span></pre>
 Adds the entry if the entry does not already belong to the feed.
 
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Author(<span style="color: #0000FF;">Assigns</span> Value <span style="color: #0000FF;">As</span> FeedKit.Author)</span></pre>
-Sets the feed author.
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Function</span> Entry(Index <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span>) <span style="color: #0000FF;">As</span> FeedKit.Entry</span></pre>
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Entry(Index <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span>, <span style="color: #0000FF;">Assigns</span> Value <span style="color: #0000FF;">As</span> FeedKit.Entry)</span></pre>
+Gets or sets the entry at the supplied index. Throws an OutOfBoundsException if the index is invalid.
+
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Function</span> IndexOf(Entry <span style="color: #0000FF;">As</span> FeedKit.Entry) <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span></span></pre>
+Returns in the index of the supplied entry, or -1 if not found.
 
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Insert(Index <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span>, Entry <span style="color: #0000FF;">As</span> FeedKit.Entry)</span></pre>
 Adds the entry to the supplied index if the entry does not already belong to the feed.
@@ -75,3 +62,4 @@ Removes the entry from the feed if it exists.
 
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Remove(Index <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Integer</span>)</span></pre>
 Removes the entry at the supplied index. Throws an OutOfBoundsException if the index is not valid.
+

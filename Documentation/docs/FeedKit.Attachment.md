@@ -2,12 +2,8 @@
 
 The FeedKit.Attachment class provides information about files that belong to an entry, such as images or downloads.
 
-Instances of this class cannot be modified. See [FeedKit.MutableAttachment](#feedkitmutableattachment) for an editable version.
-
 ## Constructors
 
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor(Source <span style="color: #0000FF;">As</span> FeedKit.Attachment)</span></pre>
-Creates a clone of the supplied attachment.
 
 ## Properties
 
@@ -25,10 +21,3 @@ The title or filename of the attachment.
 
 <pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;">URL <span style="color: #0000FF;">As</span> <span style="color: #0000FF;">Text</span></span></pre>
 The URL where the attachment content can be loaded.
-
-# FeedKit.MutableAttachment
-
-## Constructors
-
-<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor()</span></pre>
-Creates a new empty attachment.
