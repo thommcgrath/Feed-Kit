@@ -57,8 +57,8 @@ Implements FeedKit.Engine
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function Generate(Attachment As FeedKit.Attachment) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h21
+		Private Function Generate(Attachment As FeedKit.Attachment) As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  
 		  Dict.Value("url") = Attachment.URL
@@ -73,8 +73,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function Generate(Author As FeedKit.Author) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h21
+		Private Function Generate(Author As FeedKit.Author) As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  
 		  Self.AddIfNotEmpty(Dict, "name", Author.Name)
@@ -87,8 +87,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function Generate(Entry As FeedKit.Entry) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h21
+		Private Function Generate(Entry As FeedKit.Entry) As Xojo.Core.Dictionary
 		  Dim Attachments() As Xojo.Core.Dictionary
 		  For Each Attachment As FeedKit.Attachment In Entry
 		    Attachments.Append(Self.Generate(Attachment))
@@ -167,8 +167,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseAttachment(Dict As Xojo.Core.Dictionary) As FeedKit.Attachment
+	#tag Method, Flags = &h21
+		Private Function ParseAttachment(Dict As Xojo.Core.Dictionary) As FeedKit.Attachment
 		  If Not (Dict.HasKey("url") And Dict.HasKey("mime_type")) Then
 		    Raise New FeedKit.ParseError("Attachment requires url and mime_type keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
@@ -194,8 +194,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseAuthor(Dict As Xojo.Core.Dictionary) As FeedKit.Author
+	#tag Method, Flags = &h21
+		Private Function ParseAuthor(Dict As Xojo.Core.Dictionary) As FeedKit.Author
 		  If Not (Dict.HasKey("name") Or Dict.HasKey("avatar") Or Dict.HasKey("url")) Then
 		    Raise New FeedKit.ParseError("Author requires one of name, avatar, or url keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
@@ -219,8 +219,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseEntry(Dict As Xojo.Core.Dictionary) As FeedKit.Entry
+	#tag Method, Flags = &h21
+		Private Function ParseEntry(Dict As Xojo.Core.Dictionary) As FeedKit.Entry
 		  If Not (Dict.HasKey("id") And (Dict.HasKey("content_html") Or Dict.HasKey("content_text"))) Then
 		    Raise New FeedKit.ParseError("Entries require id and either content_html or content_text keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
@@ -279,8 +279,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseFeed(Dict As Xojo.Core.Dictionary) As FeedKit.Feed
+	#tag Method, Flags = &h21
+		Private Function ParseFeed(Dict As Xojo.Core.Dictionary) As FeedKit.Feed
 		  If Not (Dict.HasKey("title") And Dict.HasKey("version") And Dict.HasKey("items")) Then
 		    Raise New FeedKit.ParseError("Feed requires title, version, and items keys. See https://jsonfeed.org/version/1 for details.")
 		  End If

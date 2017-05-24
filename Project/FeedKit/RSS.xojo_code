@@ -196,8 +196,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseAttachment(Element As XMLNode) As FeedKit.Attachment
+	#tag Method, Flags = &h21
+		Private Function ParseAttachment(Element As XMLNode) As FeedKit.Attachment
 		  Dim Attachment As FeedKit.Attachment = CreateAttachment(Element)
 		  If Attachment = Nil Then
 		    Attachment = New FeedKit.Attachment
@@ -210,8 +210,8 @@ Implements FeedKit.Engine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ParseEntry(Element As XMLNode) As FeedKit.Entry
+	#tag Method, Flags = &h21
+		Private Function ParseEntry(Element As XMLNode) As FeedKit.Entry
 		  If Element = Nil Or Element.Name <> "item" Then
 		    Return Nil
 		  End If

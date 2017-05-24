@@ -11,4 +11,8 @@ pages:
 - Interfaces: [
 {FeedKit.Engine: 'FeedKit.Engine.md'}
 ]
+- Engines: [
+{FeedKit.JSON: 'FeedKit.JSON.md'},
+{FeedKit.RSS: 'FeedKit.RSS.md'}
+]
 theme: mkdocs
