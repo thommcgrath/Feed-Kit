@@ -154,7 +154,7 @@ Implements FeedKit.Engine
 		    Return Nil
 		  End If
 		  
-		  Dim Feed As New FeedKit.MutableFeed
+		  Dim Feed As New FeedKit.Feed
 		  Dim Channel As XmlNode = Root.FirstChild
 		  For I As Integer = 0 To Channel.ChildCount - 1
 		    Dim Child As XmlNode = Channel.Child(I)
@@ -175,7 +175,7 @@ Implements FeedKit.Engine
 		    End Select
 		  Next
 		  
-		  Return New FeedKit.Feed(Feed)
+		  Return Feed
 		  
 		  Exception Err As RuntimeException
 		    Raise New FeedKit.ParseError(Err.Message.ToText)
@@ -184,7 +184,7 @@ Implements FeedKit.Engine
 
 	#tag Method, Flags = &h1
 		Protected Function ParseAttachment(Element As XMLNode) As FeedKit.Attachment
-		  Dim Attachment As New FeedKit.MutableAttachment
+		  Dim Attachment As New FeedKit.Attachment
 		  Attachment.URL = Element.GetAttribute("url").ToText
 		  Attachment.Length = Val(Element.GetAttribute("length"))
 		  Attachment.MimeType = Element.GetAttribute("type").ToText
@@ -198,7 +198,7 @@ Implements FeedKit.Engine
 		    Return Nil
 		  End If
 		  
-		  Dim Entry As New FeedKit.MutableEntry
+		  Dim Entry As New FeedKit.Entry
 		  For I As Integer = 0 To Element.ChildCount - 1
 		    Dim Child As XMLNode = Element.Child(I)
 		    Select Case Child.Name
@@ -220,7 +220,7 @@ Implements FeedKit.Engine
 		        Entry.Append(Attachment)
 		      End If
 		    Case "author"
-		      Dim Author As New FeedKit.MutableAuthor
+		      Dim Author As New FeedKit.Author
 		      Author.Email = Self.TextValue(Child)
 		      Entry.Author = Author
 		    Case "source"

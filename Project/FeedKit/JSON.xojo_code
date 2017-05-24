@@ -165,7 +165,7 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Attachment requires url and mime_type keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Attachment As New FeedKit.MutableAttachment
+		  Dim Attachment As New FeedKit.Attachment
 		  Attachment.URL = Dict.Value("url")
 		  Attachment.MimeType = Dict.Value("mime_type")
 		  
@@ -179,7 +179,7 @@ Implements FeedKit.Engine
 		    Attachment.Duration = Dict.Value("duration_in_seconds")
 		  End If
 		  
-		  Return New FeedKit.Attachment(Attachment)
+		  Return Attachment
 		End Function
 	#tag EndMethod
 
@@ -189,7 +189,7 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Author requires one of name, avatar, or url keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Author As New FeedKit.MutableAuthor
+		  Dim Author As New FeedKit.Author
 		  
 		  If Dict.HasKey("name") Then
 		    Author.Name = Dict.Value("name")
@@ -201,7 +201,7 @@ Implements FeedKit.Engine
 		    Author.URL = Dict.Value("url")
 		  End If
 		  
-		  Return New FeedKit.Author(Author)
+		  Return Author
 		End Function
 	#tag EndMethod
 
@@ -211,7 +211,7 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Entries require id and either content_html or content_text keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Entry As New FeedKit.MutableEntry
+		  Dim Entry As New FeedKit.Entry
 		  Entry.ID = Dict.Value("id")
 		  If Dict.HasKey("content_html") Then
 		    Entry.ContentHTML = Dict.Value("content_html")
@@ -257,7 +257,7 @@ Implements FeedKit.Engine
 		    Next
 		  End If
 		  
-		  Return New FeedKit.Entry(Entry)
+		  Return Entry
 		End Function
 	#tag EndMethod
 
@@ -269,7 +269,7 @@ Implements FeedKit.Engine
 		  
 		  // Don't actually need the version yet
 		  
-		  Dim Feed As New FeedKit.MutableFeed
+		  Dim Feed As New FeedKit.Feed
 		  Feed.Title = Dict.Value("title")
 		  
 		  If Dict.HasKey("home_page_url") Then
@@ -305,7 +305,7 @@ Implements FeedKit.Engine
 		    Feed.Append(Self.ParseEntry(Item))
 		  Next
 		  
-		  Return New FeedKit.Feed(Feed)
+		  Return Feed
 		End Function
 	#tag EndMethod
 

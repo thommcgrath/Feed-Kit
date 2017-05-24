@@ -1,70 +1,30 @@
 #tag Class
 Protected Class Attachment
-	#tag Method, Flags = &h1
-		Protected Sub Constructor()
+	#tag Method, Flags = &h0
+		Sub Constructor()
 		  
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Source As FeedKit.Attachment)
-		  Self.mDuration = Source.mDuration
-		  Self.mLength = Source.mLength
-		  Self.mMimeType = Source.mMimeType
-		  Self.mTitle = Source.mTitle
-		  Self.mURL = Source.mURL
-		End Sub
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Duration() As UInteger
-		  Return Self.mDuration
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Length() As UInteger
-		  Return Self.mLength
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MimeType() As Text
-		  Return Self.mMimeType
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Title() As Text
-		  Return Self.mTitle
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function URL() As Text
-		  Return Self.mURL
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h1
-		Protected mDuration As UInteger
+	#tag Property, Flags = &h0
+		Duration As UInteger
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mLength As UInteger
+	#tag Property, Flags = &h0
+		Length As UInteger
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mMimeType As Text
+	#tag Property, Flags = &h0
+		MIMEType As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mTitle As Text
+	#tag Property, Flags = &h0
+		Title As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mURL As Text
+	#tag Property, Flags = &h0
+		URL As Text
 	#tag EndProperty
 
 
@@ -81,11 +41,6 @@ Protected Class Attachment
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mURL"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -1,59 +1,26 @@
 #tag Class
 Protected Class Author
-	#tag Method, Flags = &h1
-		Protected Sub Constructor()
+	#tag Method, Flags = &h0
+		Sub Constructor()
 		  
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Source As FeedKit.Author)
-		  Self.mIconURL = Source.mIconURL
-		  Self.mName = Source.mName
-		  Self.mURL = Source.mURL
-		  Self.mEmail = Source.mEmail
-		End Sub
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Email() As Text
-		  Return Self.mEmail
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IconURL() As Text
-		  Return Self.mIconURL
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As Text
-		  Return Self.mName
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function URL() As Text
-		  Return Self.mURL
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h1
-		Protected mEmail As Text
+	#tag Property, Flags = &h0
+		Email As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mIconURL As Text
+	#tag Property, Flags = &h0
+		IconURL As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mName As Text
+	#tag Property, Flags = &h0
+		Name As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mURL As Text
+	#tag Property, Flags = &h0
+		URL As Text
 	#tag EndProperty
 
 
