@@ -4,6 +4,8 @@ The FeedKit.Attachment class provides information about files that belong to an 
 
 ## Constructors
 
+<pre><span style="font-family: 'source-code-pro', 'menlo', 'courier', monospace; color: #000000;"><span style="color: #0000FF;">Public</span> <span style="color: #0000FF;">Sub</span> Constructor()</span></pre>
+Creates a new empty attachment.
 
 ## Properties
 
