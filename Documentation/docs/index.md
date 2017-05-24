@@ -11,9 +11,9 @@ Download the Feed Kit project, open the `Feed Kit.xojo_project` file, then copy 
 
 ## Getting Started
 
-The first step is to obtain a JSON Feed, which is best done with [Xojo.Net.HTTPSocket](http://developer.xojo.com/xojo-net-httpsocket) and pass the result to FeedKit.Parse.
+The first step is to obtain a JSON Feed, which is best done with [Xojo.Net.HTTPSocket](http://developer.xojo.com/xojo-net-httpsocket) and pass the result to `FeedKit.Parse`.
 
-A [FeedKit.Feed](FeedKit.Feed.md) object will be returned once ready. Nil will be returned if FeedKit does not have a built-in engine to parse the content. A FeedKit.ParseError exception will be fired if an engine was found, but an error was found in the feed content.
+A [FeedKit.Feed](FeedKit.Feed.md) object will be returned once ready. `Nil` will be returned if FeedKit does not have a built-in engine to parse the content. A `FeedKit.ParseError` exception will be fired if an engine was found, but an error was found in the feed content.
 
 A [FeedKit.Feed](FeedKit.Feed.md) object contains 1 or more [FeedKit.Entry](FeedKit.Entry.md) objects. Each [FeedKit.Entry](FeedKit.Entry.md) may have any number of [FeedKit.Attachment](FeedKit.Attachment.md) objects. Both [FeedKit.Feed](FeedKit.Feed.md) and [FeedKit.Entry](FeedKit.Entry.md) can be used like an array.
 
