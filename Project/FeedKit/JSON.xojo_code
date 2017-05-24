@@ -67,6 +67,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "size_in_bytes", Attachment.Length)
 		  Self.AddIfNotEmpty(Dict, "duration_in_seconds", Attachment.Duration)
 		  
+		  RaiseEvent EncodeAttachment(Attachment, Dict)
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -78,6 +80,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "name", Author.Name)
 		  Self.AddIfNotEmpty(Dict, "url", Author.URL)
 		  Self.AddIfNotEmpty(Dict, "avatar", Author.IconURL)
+		  
+		  RaiseEvent EncodeAuthor(Author, Dict)
 		  
 		  Return Dict
 		End Function
@@ -105,6 +109,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "title", Entry.Title)
 		  Self.AddIfNotEmpty(Dict, "url", Entry.URL)
 		  
+		  RaiseEvent EncodeEntry(Entry, Dict)
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -129,6 +135,8 @@ Implements FeedKit.Engine
 		  Self.AddIfNotEmpty(Dict, "icon", Feed.IconURL)
 		  Self.AddIfNotEmpty(Dict, "favicon", Feed.FavIconURL)
 		  Self.AddIfNotEmpty(Dict, "author", Feed.Author)
+		  
+		  RaiseEvent EncodeFeed(Feed, Dict)
 		  
 		  Return Xojo.Data.GenerateJSON(Dict)
 		End Function
@@ -165,7 +173,10 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Attachment requires url and mime_type keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Attachment As New FeedKit.Attachment
+		  Dim Attachment As FeedKit.Attachment = CreateAttachment(Dict)
+		  If Attachment = Nil Then
+		    Attachment = New FeedKit.Attachment
+		  End If
 		  Attachment.URL = Dict.Value("url")
 		  Attachment.MimeType = Dict.Value("mime_type")
 		  
@@ -189,7 +200,10 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Author requires one of name, avatar, or url keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Author As New FeedKit.Author
+		  Dim Author As FeedKit.Author = CreateAuthor(Dict)
+		  If Author = Nil Then
+		    Author = New FeedKit.Author
+		  End If
 		  
 		  If Dict.HasKey("name") Then
 		    Author.Name = Dict.Value("name")
@@ -211,7 +225,11 @@ Implements FeedKit.Engine
 		    Raise New FeedKit.ParseError("Entries require id and either content_html or content_text keys. See https://jsonfeed.org/version/1 for details.")
 		  End If
 		  
-		  Dim Entry As New FeedKit.Entry
+		  Dim Entry As FeedKit.Entry = CreateEntry(Dict)
+		  If Entry = Nil Then
+		    Entry = New FeedKit.Entry
+		  End If
+		  
 		  Entry.ID = Dict.Value("id")
 		  If Dict.HasKey("content_html") Then
 		    Entry.ContentHTML = Dict.Value("content_html")
@@ -269,7 +287,10 @@ Implements FeedKit.Engine
 		  
 		  // Don't actually need the version yet
 		  
-		  Dim Feed As New FeedKit.Feed
+		  Dim Feed As FeedKit.Feed = CreateFeed(Dict)
+		  If Feed = Nil Then
+		    Feed = New FeedKit.Feed
+		  End If
 		  Feed.Title = Dict.Value("title")
 		  
 		  If Dict.HasKey("home_page_url") Then
@@ -308,6 +329,39 @@ Implements FeedKit.Engine
 		  Return Feed
 		End Function
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event CreateAttachment(Source As Xojo.Core.Dictionary) As FeedKit.Attachment
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateAuthor(Source As Xojo.Core.Dictionary) As FeedKit.Author
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateEntry(Source As Xojo.Core.Dictionary) As FeedKit.Entry
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateFeed(Source As Xojo.Core.Dictionary) As FeedKit.Feed
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeAttachment(Attachment As FeedKit.Attachment, Data As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeAuthor(Author As FeedKit.Author, Data As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeEntry(Entry As FeedKit.Entry, Data As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeFeed(Feed As FeedKit.Feed, Data As Xojo.Core.Dictionary)
+	#tag EndHook
 
 
 End Class

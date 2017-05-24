@@ -12,6 +12,8 @@ Implements FeedKit.Engine
 		  Enclosure.SetAttribute("url", Value.URL)
 		  Enclosure.SetAttribute("length", Str(Value.Length, "-0"))
 		  Enclosure.SetAttribute("type", Value.MimeType)
+		  
+		  RaiseEvent EncodeAttachment(Value, Enclosure)
 		End Sub
 	#tag EndMethod
 
@@ -34,7 +36,12 @@ Implements FeedKit.Engine
 		  GUID.AppendChild(Document.CreateTextNode(Value.ID))
 		  
 		  If Value.Author <> Nil Then
-		    Self.Append(Document, Item, "author", Value.Author.Email)
+		    Dim Author As XMLNode = Document.CreateElement("author")
+		    Author.AppendChild(Document.CreateTextNode(Value.Author.Email))
+		    RaiseEvent EncodeAuthor(Value.Author, Author)
+		    If Author.FirstChild <> Nil And Author.FirstChild.Value <> "" Then
+		      Item.AppendChild(Author)
+		    End If
 		  End If
 		  
 		  If Value.ExternalURL <> "" Then
@@ -48,6 +55,8 @@ Implements FeedKit.Engine
 		  For Each Attachment As FeedKit.Attachment In Value
 		    Self.Append(Document, Item, Attachment)
 		  Next
+		  
+		  RaiseEvent EncodeEntry(Value, Item)
 		End Sub
 	#tag EndMethod
 
@@ -123,6 +132,8 @@ Implements FeedKit.Engine
 		    Self.Append(Document, Channel, Entry)
 		  Next
 		  
+		  RaiseEvent EncodeFeed(Feed, Channel)
+		  
 		  Return Document.Transform(Self.PrettyTransform).ToText
 		End Function
 	#tag EndMethod
@@ -154,8 +165,11 @@ Implements FeedKit.Engine
 		    Return Nil
 		  End If
 		  
-		  Dim Feed As New FeedKit.Feed
-		  Dim Channel As XmlNode = Root.FirstChild
+		  Dim Channel As XMLNode = Root.FirstChild
+		  Dim Feed As FeedKit.Feed = CreateFeed(Channel)
+		  If Feed = Nil Then
+		    Feed = New FeedKit.Feed
+		  End If
 		  For I As Integer = 0 To Channel.ChildCount - 1
 		    Dim Child As XmlNode = Channel.Child(I)
 		    Select Case Child.Name
@@ -184,7 +198,11 @@ Implements FeedKit.Engine
 
 	#tag Method, Flags = &h1
 		Protected Function ParseAttachment(Element As XMLNode) As FeedKit.Attachment
-		  Dim Attachment As New FeedKit.Attachment
+		  Dim Attachment As FeedKit.Attachment = CreateAttachment(Element)
+		  If Attachment = Nil Then
+		    Attachment = New FeedKit.Attachment
+		  End If
+		  
 		  Attachment.URL = Element.GetAttribute("url").ToText
 		  Attachment.Length = Val(Element.GetAttribute("length"))
 		  Attachment.MimeType = Element.GetAttribute("type").ToText
@@ -198,7 +216,11 @@ Implements FeedKit.Engine
 		    Return Nil
 		  End If
 		  
-		  Dim Entry As New FeedKit.Entry
+		  Dim Entry As FeedKit.Entry = CreateEntry(Element)
+		  If Entry = Nil Then
+		    Entry = New FeedKit.Entry
+		  End If
+		  
 		  For I As Integer = 0 To Element.ChildCount - 1
 		    Dim Child As XMLNode = Element.Child(I)
 		    Select Case Child.Name
@@ -220,7 +242,10 @@ Implements FeedKit.Engine
 		        Entry.Append(Attachment)
 		      End If
 		    Case "author"
-		      Dim Author As New FeedKit.Author
+		      Dim Author As FeedKit.Author = CreateAuthor(Child)
+		      If Author = Nil Then
+		        Author = New FeedKit.Author
+		      End If
 		      Author.Email = Self.TextValue(Child)
 		      Entry.Author = Author
 		    Case "source"
@@ -255,6 +280,39 @@ Implements FeedKit.Engine
 		  End If
 		End Function
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event CreateAttachment(Element As XMLNode) As FeedKit.Attachment
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateAuthor(Element As XMLNode) As FeedKit.Author
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateEntry(Element As XMLNode) As FeedKit.Entry
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CreateFeed(Element As XMLNode) As FeedKit.Feed
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeAttachment(Attachment As FeedKit.Attachment, Element As XMLNode)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeAuthor(Author As FeedKit.Author, Element As XMLNode)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeEntry(Entry As FeedKit.Entry, Element As XMLNode)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event EncodeFeed(Feed As FeedKit.Feed, Element As XMLNode)
+	#tag EndHook
 
 
 	#tag Constant, Name = PrettyTransform, Type = String, Dynamic = False, Default = \"<\?xml version\x3D\"1.0\" encoding\x3D\"UTF-8\"\?>\n<xsl:transform version\x3D\"1.0\" xmlns:xsl\x3D\"http://www.w3.org/1999/XSL/Transform\">\n    <xsl:output method\x3D\"xml\" indent\x3D\"yes\" />\n    <xsl:template match\x3D\"/\">\n        <xsl:copy-of select\x3D\"/\" />\n    </xsl:template>\n</xsl:transform>", Scope = Protected
